@@ -23,6 +23,12 @@ cd project
 clasp create
 ```
 
+すでに存在しているプロジェクトにリンクさせる方法(clone)
+
+```bash
+clasp clone "project_ID"
+```
+
 GAS環境へ変更を反映させる(push)
 
 ```bash
