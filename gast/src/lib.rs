@@ -1,8 +1,10 @@
 extern crate wasm_bindgen;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*};
 
 extern crate image; // image ライブラリをインポート
-use image::{ImageBuffer, Rgba};
+use image::{ DynamicImage,ImageBuffer, Rgba};
+
+use std::io::Cursor;
 
 #[wasm_bindgen]
 pub fn test_image_gen(width:u32,height:u32)->Vec<u8>{
@@ -18,16 +20,20 @@ pub fn test_image_gen(width:u32,height:u32)->Vec<u8>{
         }
     }
 
-    // 画像データをバイト形式で取得
-    let png_data = image_buffer.to_vec(); // Vec<u8>
-    return png_data;
+    let dynamic_image: DynamicImage = DynamicImage::ImageRgba8(image_buffer).into();
+
+    // バッファをメモリに書き込むためのカーソルを用意
+    let mut buffer = Cursor::new(Vec::new());
+
+    // DynamicImage を PNG 形式でエンコードし、バッファに書き込む
+    dynamic_image.write_to(&mut buffer, image::ImageOutputFormat::Png).unwrap();
+
+    // バッファの内容を Vec<u8> として取得
+    let png_data = buffer.into_inner();
+
+    png_data
 }
 
-
-#[wasm_bindgen]
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
 
 
 #[cfg(test)]
@@ -35,8 +41,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn test0() {
+        println!("{}","");
     }
 }
